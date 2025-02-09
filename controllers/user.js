@@ -1,7 +1,6 @@
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 const User = require("../models/user.js");
-const { setUser } = require('../service/auth.js');
-
+const { setUser } = require("../service/auth.js");
 
 async function handleUserSignup(req, res) {
   const { name, email, password } = req.body;
@@ -14,24 +13,23 @@ async function handleUserSignup(req, res) {
 }
 
 async function handleUserLogin(req, res) {
-    const { email, password } = req.body;
-    const user = await User.findOne({
-      email,
-      password,
+  const { email, password } = req.body;
+  const user = await User.findOne({
+    email,
+    password,
+  });
+  if (!user) {
+    return res.render("login", {
+      error: "Invalid Username or Password",
     });
-    if (!user) {
-        return res.render('login', {
-            error: 'Invalid Username or Password',
-        })
-    }
-
-    const token = setUser(user);
-    res.cookie('uid', token);
-    return res.redirect("/");
   }
-  
+
+  const token = setUser(user);
+  res.cookie("token", token);
+  return res.redirect("/");
+}
 
 module.exports = {
   handleUserSignup,
-  handleUserLogin
+  handleUserLogin,
 };
